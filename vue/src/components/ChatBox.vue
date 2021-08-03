@@ -1,10 +1,16 @@
 <template>
-    <div class="chatbox">
+    <div v-show="opened" class="chatbox">
+        <h1>Chat</h1>
         <section class="chat-contents">
             <div v-for="message in messages" :key="message.body" class="chat-message">
                 <span class="chat-author">{{ message.author + ': ' }}</span>
                 <span class="chat-message-content">{{ message.body }}</span>
             </div>
+        </section>
+
+        <section class="chat-input-bar">
+          <input v-model="inputMessage" v-on:keyup.enter="sendMessage" placeholder="Say something!">
+          <button v-on:click="sendMessage" v-bind:disabled="!validMessage">Send</button>
         </section>
     </div>
 </template>
@@ -22,6 +28,8 @@ export default defineComponent({
   name: 'ChatBox',
   data() {
     return {
+      opened: true,
+      inputMessage: '',
       messages: [
         { author: 'SYSTEM', body: 'This is a testing message.' },
         { author: 'SYSTEM', body: 'Please do not be alarmed.' },
@@ -34,8 +42,17 @@ export default defineComponent({
       this.messages.push({ author, body });
     },
 
-    sendMessage(content: string) {
-      socket.emit('chat-message', content);
+    sendMessage() {
+      if (!this.validMessage) return;
+
+      socket.emit('chat-message', this.inputMessage);
+      this.inputMessage = '';
+    },
+  },
+
+  computed: {
+    validMessage(): boolean {
+      return this.inputMessage.length >= 1 && this.inputMessage.length <= 100;
     },
   },
 
@@ -50,19 +67,49 @@ export default defineComponent({
 
 <style scoped lang="scss">
 .chatbox {
-  width: 500px;
-  height: 500px;
   background-color: $accent-color;
-  padding: 16px;
+  border-radius: 8px;
+  padding: 8px;
+  max-width: 600px;
+
+  h1 {
+    color: white;
+    margin: 0;
+    padding: 0;
+  }
 
   .chat-contents {
     display: flex;
     flex-direction: column;
+    background-color: white;
+
+    margin: 12px 0;
+    height: 200px;
+    overflow-y: scroll;
 
     .chat-message {
-      .chat-author {
-        font-weight: bold;
-      }
+      padding: 4px;
+      word-wrap: break-word;
+      white-space: normal;
+
+      .chat-author { font-weight: bold; }
+      &:nth-of-type(2n) { background-color: #eee; }
+    }
+  }
+
+  .chat-input-bar {
+    display: flex;
+
+    input {
+      flex-grow: 19;
+      outline: none;
+      border: none;
+    }
+
+    button {
+      flex-grow: 1;
+      outline: none;
+      border: none;
     }
   }
 }
