@@ -3,14 +3,18 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
-    "build": "tsc --build --clean && tsc --build",
+    "build-vue": "cd ../vue && npm run build",
+    "build-server": "tsc --build --clean && tsc --build",
+    "build": "npm run build-server && npm run build-vue",
     "lint": "eslint src/*.ts",
-    "lintfix": "eslint src/*.ts --fix"
+    "lintfix": "eslint src/*.ts --fix",
+    "start": "node ./dist/index.js"
   },
   "keywords": [],
   "author": "Robert A Fraser",
   "license": "MIT",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.17.1",
     "socket.io": "^4.1.3"
   },

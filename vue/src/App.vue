@@ -1,16 +1,16 @@
 <template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App"/>
+  <h1>Hello, World</h1>
+  <ChatBox></ChatBox>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import HelloWorld from './components/HelloWorld.vue';
+import ChatBox from './components/ChatBox.vue';
 
 export default defineComponent({
   name: 'App',
   components: {
-    HelloWorld,
+    ChatBox,
   },
 });
 </script>
