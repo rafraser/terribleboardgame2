@@ -1,17 +1,12 @@
 <template>
-  <h1>Hello, World</h1>
-  <ChatBox></ChatBox>
+  <router-view></router-view>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import ChatBox from './components/ChatBox.vue';
 
 export default defineComponent({
   name: 'App',
-  components: {
-    ChatBox,
-  },
 });
 </script>
 
