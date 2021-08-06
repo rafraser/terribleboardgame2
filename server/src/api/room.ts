@@ -4,9 +4,16 @@ import { Room } from '../types/room';
 
 const router = Router();
 
+router.get('/', (req, res) => {
+  const roomData = Room.publicRooms().map((room) => (
+    { roomCode: room.roomCode, playerCount: room.playerCount, status: room.state.status }
+  ));
+  res.json(roomData);
+});
+
 router.get('/:roomId', (req, res) => {
   const room = Room.findRoom(req.params.roomId);
-  if (room === null) {
+  if (!room) {
     res.json({ exists: false });
   } else {
     res.json({ exists: true, playerCount: room.playerCount(), status: room.state.status });

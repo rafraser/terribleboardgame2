@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import cors from 'cors';
 import socketInit from './socket';
 
 import api from './api';
@@ -10,6 +11,9 @@ app.use(express.static(`${__dirname}/app`));
 
 // Register API endpoints
 app.use('/api/', api);
+
+// Use CORS in development
+app.use(cors());
 
 // Create an HTTP server and pass to the socket init
 const server = http.createServer(app);
