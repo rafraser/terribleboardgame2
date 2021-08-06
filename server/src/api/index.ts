@@ -1,9 +1,7 @@
 import { Router } from 'express';
+import roomApi from './room';
 
 const router = Router();
-
-router.get('/', () => {
-  // not implemented
-});
+router.use('/room', roomApi);
 
 export default router;
