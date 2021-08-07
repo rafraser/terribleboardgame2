@@ -1,3 +1,5 @@
+import Player from './player';
+
 type RoomStateLobby = {
   status: 'lobby',
 };
@@ -18,7 +20,7 @@ interface RoomList {
 export class Room {
   public readonly roomCode: string;
 
-  public players: any[] = [];
+  public players: Player[] = [];
 
   public state: RoomState = { status: 'lobby' };
 
@@ -66,6 +68,14 @@ export class Room {
   }
 
   /**
+   * @param username Username to check
+   * @returns Whether or not a player with that username is already in the room
+   */
+  public usernameTaken(username: string): boolean {
+    return Object.values(this.players).some((player) => player.username === username);
+  }
+
+  /**
    * Add a new player to the room
    * @param player Player to add to the room
    * @returns Index of the new player, or -1 if the room is full
@@ -88,7 +98,7 @@ export class Room {
    * @param id Player index to remove
    */
   public removePlayer(id: number): void {
-    this.players[id] = undefined;
+    delete this.players[id];
     if (this.playerCount() === 0) delete Room.rooms[this.roomCode];
   }
 
@@ -97,6 +107,13 @@ export class Room {
    */
   public playerCount(): number {
     return this.players.filter((val) => val !== undefined).length;
+  }
+
+  /**
+   * @returns whether this room has the maximum number of players
+   */
+  public isFull(): boolean {
+    return this.playerCount() >= Room.MAX_PLAYERS;
   }
 
   /**

@@ -14,4 +14,5 @@ app.use(express.static(`${__dirname}/app`));
 const server = app.listen(3000, () => {
   console.log('Server started on *:3000');
 });
+
 socketInit(server);
