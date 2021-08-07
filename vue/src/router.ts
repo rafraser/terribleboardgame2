@@ -1,13 +1,14 @@
 import { createRouter, createWebHistory } from 'vue-router';
 
 import CreateRoom from './pages/CreateRoom.vue';
-import Index from './pages/Index.vue';
-import Room from './pages/Room.vue';
+import MainMenu from './pages/MainMenu.vue';
+import JoinRoom from './pages/JoinRoom.vue';
 
 const routes = [
-  { path: '/', component: Index },
-  { path: '/create-room', component: CreateRoom },
-  { path: '/room/:code', component: Room },
+  { path: '/', component: MainMenu },
+  { path: '/create', component: CreateRoom },
+  { path: '/join', component: JoinRoom },
+  { path: '/join/:code', component: JoinRoom },
 ];
 
 const router = createRouter({
