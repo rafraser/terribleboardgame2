@@ -5,7 +5,7 @@ import { Room } from '../types/room';
 function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
   room.addPlayer(player);
   socket.join(room.roomCode);
-  socket.emit('login-success');
+  socket.emit('login-success', { roomCode: room.roomCode });
 
   // Now that this socket is connected, there is no need to listen for the menu events
   socket.removeAllListeners('join-room');

@@ -24,6 +24,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
+import { joinLobby } from '../roomstate';
 import socket from '../socket';
 
 export default defineComponent({
@@ -61,8 +62,9 @@ export default defineComponent({
       this.submitted = false;
     });
 
-    socket.on('login-success', () => {
-      this.validationError = 'success!';
+    socket.on('login-success', (roomData: { roomCode: string }) => {
+      joinLobby(roomData.roomCode, []);
+      this.$router.replace(`/game/${roomData.roomCode}`);
     });
   },
 });
