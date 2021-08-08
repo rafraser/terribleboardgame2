@@ -9,6 +9,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: vue
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
@@ -17,6 +20,4 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "vue/yarn.lock"
       - run: yarn install
-        working_directory: vue
       - run: yarn build
-        working_directory: vue
