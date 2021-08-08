@@ -17,4 +17,6 @@ jobs:
           cache: "yarn"
           cache-dependency-path: "vue/yarn.lock"
       - run: yarn install
+        working_directory: vue
       - run: yarn build
+        working_directory: vue
