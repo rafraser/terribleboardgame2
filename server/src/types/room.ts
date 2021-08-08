@@ -1,3 +1,4 @@
+import { Server as SocketServer } from 'socket.io';
 import Player from './player';
 
 type RoomStateLobby = {
@@ -25,6 +26,8 @@ export class Room {
   public state: RoomState = { status: 'lobby' };
 
   public isPublic: boolean = false;
+
+  private static io: SocketServer;
 
   private static rooms: RoomList = {};
 
@@ -114,6 +117,44 @@ export class Room {
    */
   public isFull(): boolean {
     return this.playerCount() >= Room.MAX_PLAYERS;
+  }
+
+  /**
+   * Encode some basic room details for networking
+   * This includes some basic state information, plus details about the players
+   * @returns RoomDetails
+   */
+  public encodeDetails(): object {
+    const encodedPlayers = this.players.map((player) => (
+      { username: player.username, score: player.score }
+    ));
+
+    return {
+      roomCode: this.roomCode,
+      state: this.state,
+      public: this.isPublic,
+      players: encodedPlayers,
+    };
+  }
+
+  /**
+   * Emit some data to all sockets connected to this room
+   *
+   * This is a nicer way of doing io.to('room').emit(event, data)
+   * @param event Name of the event to emit eg
+   * @param data Data to send alongside the event
+   */
+  public emit(event: string, data: any): void {
+    Room.io.to(this.roomCode).emit(event, data);
+  }
+
+  /**
+   * Set the IO instance for the room class
+   * This allows us to use new Room().emit(...) in a nice way
+   * @param io Socket.io IO instance
+   */
+  public static setSocketServer(io: SocketServer): void {
+    this.io = io;
   }
 
   /**

@@ -7,7 +7,10 @@ function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
   logger.debug(`${player.username} has connected to ${room.roomCode}`);
   room.addPlayer(player);
   socket.join(room.roomCode);
-  socket.emit('login-success', { roomCode: room.roomCode });
+  socket.emit('login-success', room.encodeDetails());
+
+  // Update other clients
+  room.emit('update-room-details', room.encodeDetails());
 
   // Now that this socket is connected, there is no need to listen for the menu events
   socket.removeAllListeners('join-room');

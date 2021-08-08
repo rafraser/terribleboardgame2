@@ -16,6 +16,7 @@
 import { defineComponent } from 'vue';
 import { joinLobby } from '../roomstate';
 import socket from '../socket';
+import { RoomDetails } from '../types/room';
 
 export default defineComponent({
   name: 'CreateRoom',
@@ -44,8 +45,8 @@ export default defineComponent({
       this.submitted = false;
     });
 
-    socket.on('login-success', (roomData: { roomCode: string }) => {
-      joinLobby(roomData.roomCode, []);
+    socket.on('login-success', (roomData: RoomDetails) => {
+      joinLobby(roomData);
       this.$router.replace(`/game/${roomData.roomCode}`);
     });
   },
