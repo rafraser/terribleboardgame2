@@ -1,8 +1,10 @@
 import { Socket } from 'socket.io';
 import Player from '../types/player';
 import { Room } from '../types/room';
+import logger from '../logger';
 
 function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
+  logger.debug(`${player.username} has connected to ${room.roomCode}`);
   room.addPlayer(player);
   socket.join(room.roomCode);
   socket.emit('login-success', { roomCode: room.roomCode });
@@ -51,8 +53,6 @@ export default function menuInit(socket: Socket) {
   });
 
   socket.on('create-room', (requestedUsername: string) => {
-    console.log('creating room', requestedUsername);
-
     // Validate username
     const [isValidUsername, username] = Player.validateUsername(requestedUsername);
     if (!isValidUsername) {
@@ -62,6 +62,7 @@ export default function menuInit(socket: Socket) {
 
     // Create a new room - much simpler validation checks
     const room = Room.create();
+    logger.debug(`${socket.id} created new room ${room.roomCode}`);
     const player = new Player(username);
     finaliseRoomConnection(socket, player, room);
   });

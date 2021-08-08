@@ -1,5 +1,6 @@
 import { Server as HttpServer } from 'http';
 import { Server as SocketServer, Socket } from 'socket.io';
+import logger from '../logger';
 
 import menuInit from './menu';
 
@@ -15,6 +16,7 @@ export default function init(server: HttpServer) {
   const io = new SocketServer(server, socketOptions);
 
   io.on('connection', (socket: Socket) => {
+    logger.debug(`${socket.id} has connected`);
     menuInit(socket);
   });
 }
