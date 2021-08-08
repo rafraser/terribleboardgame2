@@ -1,18 +1,31 @@
+import './env';
 import express from 'express';
 import cors from 'cors';
 import socketInit from './socket';
-
 import api from './api';
 
 // Setup Express
 const app = express();
-app.use(cors());
-app.use('/api/', api);
-app.use(express.static(`${__dirname}/app`));
+
+if (process.env.NODE_ENV === 'production') {
+  // Production front-end is directly served
+  // Setup catch-all route so everything gets sent to the Vue router
+  const CONTENT_DIR = process.env.CONTENT_DIR || 'public';
+  app.use(express.static(`${CONTENT_DIR}`));
+  app.use('/api', api);
+  app.get('/*', (_, res) => {
+    res.sendFile(`./${CONTENT_DIR}/index.html`, { root: '.' });
+  });
+} else {
+  // Development front-end is a seperate application
+  app.use(cors());
+  app.use('/api/', api);
+}
 
 // Create an HTTP server and pass to the socket init
-const server = app.listen(3000, () => {
-  console.log('Server started on *:3000');
+const port = process.env.EXPRESS_PORT || 3000;
+const server = app.listen(port, () => {
+  console.log(`Server started on *:${port}`);
 });
 
 socketInit(server);

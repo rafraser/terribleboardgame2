@@ -13,8 +13,6 @@ function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
 }
 
 export default function menuInit(socket: Socket) {
-  console.log(socket);
-
   socket.on('join-room', (roomCode: string, requestedUsername: string) => {
     // Validate username
     const [isValidUsername, username] = Player.validateUsername(requestedUsername);
@@ -53,6 +51,8 @@ export default function menuInit(socket: Socket) {
   });
 
   socket.on('create-room', (requestedUsername: string) => {
+    console.log('creating room', requestedUsername);
+
     // Validate username
     const [isValidUsername, username] = Player.validateUsername(requestedUsername);
     if (!isValidUsername) {
