@@ -1,5 +1,5 @@
 module.exports = {
-  outputDir: '../server/dist/app',
+  outputDir: '../server/public',
   css: {
     loaderOptions: {
       sass: {
