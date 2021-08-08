@@ -2,6 +2,7 @@ import { Socket } from 'socket.io';
 import Player from '../types/player';
 import { Room } from '../types/room';
 import logger from '../logger';
+import chatInit from './chat';
 
 function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
   logger.debug(`${player.username} has connected to ${room.roomCode}`);
@@ -11,6 +12,9 @@ function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
 
   // Update other clients
   room.emit('update-room-details', room.encodeDetails());
+
+  // Register new room handlers
+  chatInit(socket, player, room);
 
   // Now that this socket is connected, there is no need to listen for the menu events
   socket.removeAllListeners('join-room');
@@ -51,7 +55,7 @@ export default function menuInit(socket: Socket) {
     }
 
     // All is good, add the player to the room
-    const player = new Player(username);
+    const player = new Player(username, socket);
     finaliseRoomConnection(socket, player, room);
   });
 
@@ -66,7 +70,7 @@ export default function menuInit(socket: Socket) {
     // Create a new room - much simpler validation checks
     const room = Room.create();
     logger.debug(`${socket.id} created new room ${room.roomCode}`);
-    const player = new Player(username);
+    const player = new Player(username, socket);
     finaliseRoomConnection(socket, player, room);
   });
 }

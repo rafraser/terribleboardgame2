@@ -2,9 +2,9 @@
     <div v-show="opened" class="chatbox">
         <h1>Chat</h1>
         <section class="chat-contents">
-            <div v-for="message in messages" :key="message.body" class="chat-message">
+            <div v-for="message in messages" :key="message.content" class="chat-message">
                 <span class="chat-author">{{ message.author + ': ' }}</span>
-                <span class="chat-message-content">{{ message.body }}</span>
+                <span class="chat-message-content">{{ message.content }}</span>
             </div>
         </section>
 
@@ -21,7 +21,7 @@ import socket from '../socket';
 
 type ChatMessage = {
   author: string
-  body: string
+  content: string
 }
 
 export default defineComponent({
@@ -30,18 +30,11 @@ export default defineComponent({
     return {
       opened: true,
       inputMessage: '',
-      messages: [
-        { author: 'SYSTEM', body: 'This is a testing message.' },
-        { author: 'SYSTEM', body: 'Please do not be alarmed.' },
-      ] as ChatMessage[],
+      messages: [] as ChatMessage[],
     };
   },
 
   methods: {
-    addMessage(author: string, body: string) {
-      this.messages.push({ author, body });
-    },
-
     sendMessage() {
       if (!this.validMessage) return;
 
@@ -59,7 +52,7 @@ export default defineComponent({
   created() {
     // Setup listener for socket chat messsages
     socket.on('chat-message', (details: ChatMessage) => {
-      this.addMessage(details.author, details.body);
+      this.messages.push(details);
     });
   },
 });

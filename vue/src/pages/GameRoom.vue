@@ -1,4 +1,5 @@
 <template>
+  <div>
     <div class="form-box">
         <h1>LOBBY</h1>
         <p>please grab a drink, the game will start never</p>
@@ -10,6 +11,8 @@
           </li>
         </ul>
     </div>
+    <ChatBox></ChatBox>
+  </div>
 </template>
 
 <script lang="ts">
@@ -17,6 +20,7 @@ import { defineComponent } from 'vue';
 import { RoomDetails } from '../types/room';
 import { roomState, updateDetails } from '../roomstate';
 import socket from '../socket';
+import ChatBox from '../components/ChatBox.vue';
 
 export default defineComponent({
   name: 'Room',
@@ -34,6 +38,10 @@ export default defineComponent({
     socket.on('update-room-details', (roomData: RoomDetails) => {
       updateDetails(roomData);
     });
+  },
+
+  components: {
+    ChatBox,
   },
 });
 </script>

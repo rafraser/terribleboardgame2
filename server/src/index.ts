@@ -13,9 +13,9 @@ if (process.env.NODE_ENV === 'production') {
   const CONTENT_DIR = process.env.CONTENT_DIR || 'public';
   app.use(express.static(`${CONTENT_DIR}`));
   app.use('/api', api);
-  app.get('/*', (_, res) => {
-    res.sendFile(`./${CONTENT_DIR}/index.html`, { root: '.' });
-  });
+
+  const defaultHandler = (_: any, res: express.Response) => { res.sendFile(`./${CONTENT_DIR}/index.html`, { root: '.' }); };
+  app.get('/*', defaultHandler);
 } else {
   // Development front-end is a seperate application
   app.use(cors());
