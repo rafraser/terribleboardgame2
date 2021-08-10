@@ -1,4 +1,4 @@
 export type Player = {
-  name: String
-  score: Number
+  name: string
+  score: number
 };
