@@ -10,6 +10,12 @@ function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
   socket.join(room.roomCode);
   socket.emit('login-success', room.encodeDetails());
 
+  // Remove this player when they disconnect
+  socket.on('disconnect', () => {
+    logger.debug(`${player.username} has disconnected from ${room.roomCode}`);
+    room.removePlayer(player);
+  });
+
   // Update other clients
   room.emit('update-room-details', room.encodeDetails());
 
