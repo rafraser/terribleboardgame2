@@ -1,4 +1,5 @@
 import { Server as SocketServer } from 'socket.io';
+import logger from '../logger';
 import Player from './player';
 
 type RoomStateLobby = {
@@ -80,18 +81,14 @@ export class Room {
 
   /**
    * Add a new player to the room
+   * Will do nothing if the room is already first - look before you leap
+   *
    * @param player Player to add to the room
-   * @returns Index of the new player, or -1 if the room is full
    */
-  public addPlayer(player: any): number {
-    for (let i = 0; i < Room.MAX_PLAYERS; i += 1) {
-      if (!this.players[i]) {
-        this.players[i] = player;
-        return i;
-      }
+  public addPlayer(player: any): void {
+    if (!this.isFull()) {
+      this.players.push(player);
     }
-
-    return -1;
   }
 
   /**
@@ -100,9 +97,15 @@ export class Room {
    *
    * @param id Player index to remove
    */
-  public removePlayer(id: number): void {
-    delete this.players[id];
-    if (this.playerCount() === 0) delete Room.rooms[this.roomCode];
+  public removePlayer(player: Player): void {
+    this.players = this.players.filter((item) => item !== player);
+
+    if (this.playerCount() <= 0) {
+      logger.debug(`${this.roomCode} is now empty - removing`);
+      delete Room.rooms[this.roomCode];
+    } else {
+      this.emit('update-room-details', this.encodeDetails());
+    }
   }
 
   /**
