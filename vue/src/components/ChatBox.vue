@@ -1,16 +1,22 @@
 <template>
-    <div v-show="opened" class="chatbox">
-        <h1>Chat</h1>
-        <section class="chat-contents">
+    <div class="chatbox" :class="{ opened: opened }" @click="toggleChatState">
+        <section class="chat-header">
+          <span>Chat</span>
+        </section>
+
+        <section class="chat-contents" @click.stop>
             <div v-for="message in messages" :key="message.content" class="chat-message">
                 <span class="chat-author">{{ message.author + ': ' }}</span>
                 <span class="chat-message-content">{{ message.content }}</span>
             </div>
         </section>
 
-        <section class="chat-input-bar">
-          <input v-model="inputMessage" v-on:keyup.enter="sendMessage" placeholder="Say something!">
-          <button v-on:click="sendMessage" v-bind:disabled="!validMessage">Send</button>
+        <section class="chat-input-bar" @click.stop>
+          <input
+            v-model="inputMessage" @keyup.enter="sendMessage"
+            :disabled="!opened" placeholder="Say something!"
+          >
+          <button @click.stop="sendMessage" :disabled="!validMessage">Send</button>
         </section>
     </div>
 </template>
@@ -41,6 +47,10 @@ export default defineComponent({
       socket.emit('chat-message', this.inputMessage);
       this.inputMessage = '';
     },
+
+    toggleChatState() {
+      this.opened = !this.opened;
+    },
   },
 
   computed: {
@@ -55,29 +65,51 @@ export default defineComponent({
       this.messages.push(details);
     });
   },
+
+  beforeUnmount() {
+    socket.off('chat-message');
+  },
 });
 </script>
 
 <style scoped lang="scss">
+$chatbox-height: 240px;
+$chatbox-header-height: 40px;
+
 .chatbox {
+  position: fixed;
+  box-sizing: border-box;
+
+  right: 16px;
+  bottom: (-1 * $chatbox-height) + $chatbox-header-height;
+  transition: bottom 0.3s ease-in-out;
+
+  &.opened {
+    bottom: 16px;
+  }
+
+  width: 25vw;
+  max-width: 600px;
+  height: $chatbox-height;
+
   background-color: $accent-color;
   border-radius: 8px;
-  padding: 8px;
-  max-width: 600px;
+  padding: 0 8px;
 
-  h1 {
+  .chat-header {
     color: white;
-    margin: 0;
-    padding: 0;
+    font-weight: bold;
+    height: $chatbox-header-height;
+    font-size: 24px;
+    line-height: 40px;
   }
 
   .chat-contents {
     display: flex;
     flex-direction: column;
-    background-color: white;
+    height: $chatbox-height - $chatbox-header-height - 32px;
 
-    margin: 12px 0;
-    height: 200px;
+    background-color: white;
     overflow-y: scroll;
 
     .chat-message {
@@ -92,6 +124,9 @@ export default defineComponent({
 
   .chat-input-bar {
     display: flex;
+    box-sizing: border-box;
+    height: 32px;
+    padding: 6px 0;
 
     input {
       flex-grow: 19;
