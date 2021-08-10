@@ -11,6 +11,16 @@
           </li>
         </ul>
     </div>
+
+    <div class="players-container">
+      <PlayerInfo
+        v-for="player in players"
+        :key="player.username"
+        :player="player"
+      >
+      </PlayerInfo>
+    </div>
+
     <ChatBox></ChatBox>
   </div>
 </template>
@@ -20,7 +30,9 @@ import { defineComponent } from 'vue';
 import { RoomDetails } from '../types/room';
 import { roomState, updateDetails } from '../roomstate';
 import socket from '../socket';
+
 import ChatBox from '../components/ChatBox.vue';
+import PlayerInfo from '../components/PlayerInfo.vue';
 
 export default defineComponent({
   name: 'Room',
@@ -42,6 +54,22 @@ export default defineComponent({
 
   components: {
     ChatBox,
+    PlayerInfo,
   },
 });
 </script>
+
+<style lang="scss">
+.players-container {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  display: flex;
+  box-sizing: border-box;
+
+  width: 100%;
+  height: 80px;
+  background-color: $accent-gray;
+}
+</style>
