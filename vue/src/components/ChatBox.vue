@@ -2,7 +2,7 @@
     <div class="chatbox" :class="{ opened: opened }" @click="toggleChatState">
         <section class="chat-header">
           <span>Chat</span>
-          <span v-if="!opened && unread > 0" class="chat-unread">{{ unread }} unread</span>
+          <span v-if="unread > 0" class="chat-unread">{{ unread }} unread</span>
         </section>
 
         <section class="chat-contents" ref="messagebox" @click.stop>
@@ -57,6 +57,7 @@ export default defineComponent({
 
     toggleChatState() {
       this.opened = !this.opened;
+      if (this.opened) this.unread = 0;
     },
   },
 
