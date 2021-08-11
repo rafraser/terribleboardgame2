@@ -22,6 +22,7 @@
     </div>
 
     <ChatBox></ChatBox>
+    <CountdownTimer :duration="60"></CountdownTimer>
   </div>
 </template>
 
@@ -33,6 +34,7 @@ import socket from '../socket';
 
 import ChatBox from '../components/ChatBox.vue';
 import PlayerInfo from '../components/PlayerInfo.vue';
+import CountdownTimer from '../components/CountdownTimer.vue';
 
 export default defineComponent({
   name: 'Room',
@@ -55,6 +57,7 @@ export default defineComponent({
   components: {
     ChatBox,
     PlayerInfo,
+    CountdownTimer,
   },
 });
 </script>
