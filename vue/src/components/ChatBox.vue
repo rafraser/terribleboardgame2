@@ -2,6 +2,7 @@
     <div class="chatbox" :class="{ opened: opened }" @click="toggleChatState">
         <section class="chat-header">
           <span>Chat</span>
+          <span v-if="!opened && unread > 0" class="chat-unread">{{ unread }} unread</span>
         </section>
 
         <section class="chat-contents" ref="messagebox" @click.stop>
@@ -37,6 +38,7 @@ export default defineComponent({
       opened: true,
       inputMessage: '',
       messages: [] as ChatMessage[],
+      unread: 0,
     };
   },
 
@@ -111,6 +113,11 @@ $chatbox-header-height: 40px;
     height: $chatbox-header-height;
     font-size: 24px;
     line-height: 40px;
+
+    .chat-unread {
+      font-size: 16px;
+      margin-left: 8px;
+    }
   }
 
   .chat-contents {
