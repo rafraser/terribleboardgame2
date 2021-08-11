@@ -4,7 +4,7 @@
           <span>Chat</span>
         </section>
 
-        <section class="chat-contents" @click.stop>
+        <section class="chat-contents" ref="messagebox" @click.stop>
             <div v-for="message in messages" :key="message.content" class="chat-message">
                 <span class="chat-author">{{ message.author + ': ' }}</span>
                 <span class="chat-message-content">{{ message.content }}</span>
@@ -48,6 +48,11 @@ export default defineComponent({
       this.inputMessage = '';
     },
 
+    receiveMessage(message: ChatMessage) {
+      this.messages.push(message);
+      if (!this.opened) this.unread += 1;
+    },
+
     toggleChatState() {
       this.opened = !this.opened;
     },
@@ -61,9 +66,13 @@ export default defineComponent({
 
   created() {
     // Setup listener for socket chat messsages
-    socket.on('chat-message', (details: ChatMessage) => {
-      this.messages.push(details);
-    });
+    socket.on('chat-message', this.receiveMessage);
+  },
+
+  updated() {
+    // Scroll to bottom
+    const box = this.$refs.messagebox as HTMLElement;
+    box.scrollTop = box.scrollHeight;
   },
 
   beforeUnmount() {
