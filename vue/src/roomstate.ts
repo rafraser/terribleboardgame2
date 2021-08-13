@@ -3,19 +3,28 @@ import { Player } from './types/player';
 import { RoomDetails } from './types/room';
 
 export type RoomState = {
+  // Basic information
   connected: boolean,
-  status: string,
+  isHost: boolean,
   roomCode: string,
-  players: Player[],
+
+  // Room settings & players
+  players: Player[]
+
+  // Game state details
+  status: string
   game: string
 }
 
 function defaultState(): RoomState {
   return {
     connected: false,
-    status: 'none',
+    isHost: false,
     roomCode: '',
+
     players: [],
+
+    status: '',
     game: '',
   };
 }

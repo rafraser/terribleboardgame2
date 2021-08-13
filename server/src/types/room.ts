@@ -8,7 +8,7 @@ type RoomStateLobby = {
 
 type RoomStateInGame = {
   status: 'ingame',
-  game: String
+  game: string
 };
 
 export type RoomState =
@@ -105,7 +105,16 @@ export class Room {
       delete Room.rooms[this.roomCode];
     } else {
       this.emit('update-room-details', this.encodeDetails());
+      this.updateHost();
     }
+  }
+
+  /**
+   * Update the host of this room
+   * This will send the set-room-host message to the first connected player
+   */
+  public updateHost(): void {
+    this.players[0].emit('set-room-host', null);
   }
 
   /**
@@ -120,6 +129,13 @@ export class Room {
    */
   public isFull(): boolean {
     return this.playerCount() >= Room.MAX_PLAYERS;
+  }
+
+  /**
+   * Update the room details for all connected players
+   */
+  public updateDetails(): void {
+    this.emit('update-room-details', this.encodeDetails());
   }
 
   /**
@@ -149,6 +165,20 @@ export class Room {
    */
   public emit(event: string, data: any): void {
     Room.io.to(this.roomCode).emit(event, data);
+  }
+
+  /**
+   */
+  public listen(event: string, callback: any): void {
+    this.players.forEach((player) => {
+      player.listen(event, (data: any) => { callback(player, this, data); });
+    });
+  }
+
+  public quiet(event: string): void {
+    this.players.forEach((player) => {
+      player.quiet(event);
+    });
   }
 
   /**

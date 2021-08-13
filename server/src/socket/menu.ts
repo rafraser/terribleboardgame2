@@ -4,6 +4,13 @@ import { Room } from '../types/room';
 import logger from '../logger';
 import chatInit from './chat';
 
+function startRoomGameplay(room: Room) {
+  // We're ready to start!
+  room.state = { status: 'ingame', game: 'none' };
+  room.updateDetails();
+  room.quiet('request-start-game');
+}
+
 function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
   logger.debug(`${player.username} has connected to ${room.roomCode}`);
   room.addPlayer(player);
@@ -17,7 +24,13 @@ function finaliseRoomConnection(socket: Socket, player: Player, room: Room) {
   });
 
   // Update other clients
-  room.emit('update-room-details', room.encodeDetails());
+  room.updateDetails();
+
+  // If we're the first player in the game, mark as host
+  if (player === room.players[0]) {
+    socket.emit('set-room-host');
+    socket.on('request-start-game', () => { startRoomGameplay(room); });
+  }
 
   // Register new room handlers
   chatInit(socket, player, room);

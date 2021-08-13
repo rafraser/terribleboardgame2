@@ -8,7 +8,9 @@ export default class Player {
 
   private socket: Socket;
 
-  private scoreHistory: number[] = [];
+  public scoreHistory: number[] = [];
+
+  public roomId: number = -1;
 
   public constructor(username: string, socket: Socket) {
     this.username = username;
@@ -25,6 +27,23 @@ export default class Player {
   }
 
   /**
+   * Listen to an event from this player
+   * @param event Event to listen to
+   * @param callback Callback function to assign to this event listener
+   */
+  public listen(event: string, callback: any): void {
+    this.socket.on(event, callback);
+  }
+
+  /**
+   *
+   * @param event Event to remove listeners for
+   */
+  public quiet(event: string): void {
+    this.socket.removeAllListeners(event);
+  }
+
+  /**
    * Validate & sanitize a username
    * @param username Raw username to check
    * @returns a tuple - whether the username is valid or not, and a clean version of the username
@@ -35,5 +54,9 @@ export default class Player {
       return [false, ''];
     }
     return [true, cleaned];
+  }
+
+  get idHash() {
+    return this.socket.id.substring(0, 8);
   }
 }
