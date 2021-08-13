@@ -2,9 +2,10 @@
     <div class="chatbox" :class="{ opened: opened }" @click="toggleChatState">
         <section class="chat-header">
           <span>Chat</span>
+          <span v-if="unread > 0" class="chat-unread">{{ unread }} unread</span>
         </section>
 
-        <section class="chat-contents" @click.stop>
+        <section class="chat-contents" ref="messagebox" @click.stop>
             <div v-for="message in messages" :key="message.content" class="chat-message">
                 <span class="chat-author">{{ message.author + ': ' }}</span>
                 <span class="chat-message-content">{{ message.content }}</span>
@@ -37,6 +38,7 @@ export default defineComponent({
       opened: true,
       inputMessage: '',
       messages: [] as ChatMessage[],
+      unread: 0,
     };
   },
 
@@ -48,8 +50,14 @@ export default defineComponent({
       this.inputMessage = '';
     },
 
+    receiveMessage(message: ChatMessage) {
+      this.messages.push(message);
+      if (!this.opened) this.unread += 1;
+    },
+
     toggleChatState() {
       this.opened = !this.opened;
+      if (this.opened) this.unread = 0;
     },
   },
 
@@ -61,9 +69,13 @@ export default defineComponent({
 
   created() {
     // Setup listener for socket chat messsages
-    socket.on('chat-message', (details: ChatMessage) => {
-      this.messages.push(details);
-    });
+    socket.on('chat-message', this.receiveMessage);
+  },
+
+  updated() {
+    // Scroll to bottom
+    const box = this.$refs.messagebox as HTMLElement;
+    box.scrollTop = box.scrollHeight;
   },
 
   beforeUnmount() {
@@ -102,6 +114,11 @@ $chatbox-header-height: 40px;
     height: $chatbox-header-height;
     font-size: 24px;
     line-height: 40px;
+
+    .chat-unread {
+      font-size: 16px;
+      margin-left: 8px;
+    }
   }
 
   .chat-contents {
